@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\genealogiaModel;
+use App\progenitorModel;
 use App\animalModel;
+use App\usuariosModel;
+use App\propietarioModel;
+use App\registroASOCEBUModel;
 use App\Http\Requests;
-//use App\Animales;
 use Storage;
 use Illuminate\Support\Facades\Validator;
 use Excel;
@@ -43,6 +46,9 @@ class animalController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+
+
     public function store(Request $request)
     {
            //dd($request);
@@ -52,43 +58,111 @@ class animalController extends Controller
        $r1=Storage::disk('archivos')->put($nombre_original,  \File::get($archivo) );
        $ruta  =  storage_path('archivos') ."/". $nombre_original;
        if($r1){
-           
-            Excel::selectSheetsByIndex(0)->load($ruta, function($hoja) {
+          
+            Excel::selectSheetsByIndex(0)->load($ruta,function($hoja) {
                 $hoja->skip(1);
                 $hoja->each(function($fila) {
-                 
+                // dd($fila);
+                                       
+
                       $usersemails=animalModel::where("registro","=",$fila->registro)->first();
                     if(count( $usersemails)==0){
                         
-                      // dd($fila);
-                            
                         $animal=new animalModel;
-                    
-                      
+                       
                         $animal->registro= $fila->registro;
                         $animal->codigo= $fila->codigo;
                         $animal->nombre= $fila->nombre;
                         $animal->raza= $fila->raza;
-                        
                         $animal->fecha_nacimiento= $fila->fecnac ;
                         $animal->sexo= $fila->sx;
                         $animal->origen_reproductivo= null;
                         $animal->fecha_destete= null;
                         $animal->foto= null;
-                    
+                      
                         $animal->save();
+                         }
 
+
+                         $registro=new registroASOCEBUModel;
+                         $registro->fecha_emitido=null;
+                         $registro->propietario_id=null;
+                         $registro->animal_registro= $fila->registro;
+
+                        $registro->save();       
+
+                $datomadre=progenitorModel::where("registro","=",$fila->regmadre)->first();
+                     if(count( $datomadre)==0)  {
+                         $madre=new progenitorModel;
+                         $madre->registro=$fila->regmadre;
+                         $madre->codigo=$fila->codmadre;
+                         $madre->sexo='H';
+
+                         $madre->save();
                         
-                    }
-             
-                });
+                } 
+
+                 $datopadre=progenitorModel::where("registro","=",$fila->regpadre)->first();
+                     if(count( $datopadre)==0)  {
+                        $padre=new progenitorModel;
+                         $padre->registro=$fila->regpadre;
+                         $padre->codigo=$fila->codpadre;
+                         $padre->sexo='M';
+
+                         $padre->save();
+                       
+                } 
+
+                        $genealogia=new genealogiaModel;
+                        $genealogia->animal_registro=$fila->registro;
+                        $genealogia->registro_padre=$fila->regpadre;
+                        $genealogia->registro_madre=$fila->regmadre;
+                        $genealogia->save();
+                     });
 
             });
+              
+            $usuario=usuariosModel::where("id","=",$request->codigo)->first();
+            if (count($usuario)==0) {
+                $N_usuario= new usuariosModel;
+                $N_usuario->id=$request->codigo;
+                $N_usuario->nombre=$request->propietario;
+                $N_usuario->contrasenia=null;
+                $N_usuario->email=null;
+                $N_usuario->telefono=null;
+                $N_usuario->rol='ganadero';
+                //dd($N_usuario);
+                $N_usuario->save();
+            }
 
-            
+             $pro=propietarioModel::where("id","=",$request->codigo)->first();
+             if (count($pro)==0) {
+                
+                $propietario=new propietarioModel;
+                $propietario->id=$request->codigo;
+                $propietario->usuario_cedula=$request->codigo;
+                $propietario-> save();
+
+             }
        }
        
-       return redirect('../cargar')->with('message','Los datos se han cargado éxitosamente!');
+        $registroNom=registroASOCEBUModel::all();
+
+    
+        foreach ($registroNom as $reg ) {
+            if ($reg->propietario_id==null) {
+                $reg->fecha_emitido=$request->fecha_emitido;
+                $reg->propietario_id=$request->codigo;
+                $reg->animal_registro= $reg->animal_registro;
+   
+        $reg->save();
+
+            }
+
+        
+         
+}
+       return view('index');
     }
 
     /**

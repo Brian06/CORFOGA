@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class fincaModel extends Model
+class genealogiaModel extends Model
 {
-     use Notifiable;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -17,9 +17,9 @@ class fincaModel extends Model
      
      */
     
-     protected $table = 'fincas';
+     protected $table = 'genealogia';
     protected $fillable = [
-        'id','nombre','region','propietario_id',
+		'id','animal_registro','registro_padre','registro_madre',
     ];
 
     /**
@@ -30,12 +30,13 @@ class fincaModel extends Model
     protected $hidden = [
        //
     ];
-    public function propietario()
+    public function animal()
     {
-        return $this->hasOne('App\propietarioModel');
+         return $this->hasMany('App\animalModelo');
     }
-    public function inspeccion()
+    public function progenitores()
     {
-        return $this->belongsTo('App\inspeccionModel');
+         return $this->hasMany('App\propietarioModel');
     }
+   
 }

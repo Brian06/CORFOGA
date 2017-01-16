@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class fincaModel extends Model
+
+class inspeccionModel extends Model
 {
+    
      use Notifiable;
 
     /**
@@ -17,9 +19,9 @@ class fincaModel extends Model
      
      */
     
-     protected $table = 'fincas';
+     protected $table = 'inspecciones';
     protected $fillable = [
-        'id','nombre','region','propietario_id',
+		'id','fecha','finca_id','num_visita',
     ];
 
     /**
@@ -30,12 +32,12 @@ class fincaModel extends Model
     protected $hidden = [
        //
     ];
-    public function propietario()
+    public function finca()
     {
-        return $this->hasOne('App\propietarioModel');
+        return $this->hasMany('App\fincaModel');
     }
-    public function inspeccion()
+public function detalle()
     {
-        return $this->belongsTo('App\inspeccionModel');
+        return $this->belongsTo('App\detalleInspeccionModel');
     }
 }
