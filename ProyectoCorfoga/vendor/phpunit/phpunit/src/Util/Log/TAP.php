@@ -34,11 +34,9 @@ class PHPUnit_Util_Log_TAP extends PHPUnit_Util_Printer implements PHPUnit_Frame
     /**
      * Constructor.
      *
-     * @param mixed $out
-     *
+     * @param  mixed                       $out
      * @throws PHPUnit_Framework_Exception
-     *
-     * @since Method available since Release 3.3.4
+     * @since  Method available since Release 3.3.4
      */
     public function __construct($out = null)
     {
@@ -59,20 +57,6 @@ class PHPUnit_Util_Log_TAP extends PHPUnit_Util_Printer implements PHPUnit_Frame
     }
 
     /**
-     * A warning occurred.
-     *
-     * @param PHPUnit_Framework_Test    $test
-     * @param PHPUnit_Framework_Warning $e
-     * @param float                     $time
-     *
-     * @since Method available since Release 5.1.0
-     */
-    public function addWarning(PHPUnit_Framework_Test $test, PHPUnit_Framework_Warning $e, $time)
-    {
-        $this->writeNotOk($test, 'Warning');
-    }
-
-    /**
      * A failure occurred.
      *
      * @param PHPUnit_Framework_Test                 $test
@@ -88,19 +72,19 @@ class PHPUnit_Util_Log_TAP extends PHPUnit_Util_Printer implements PHPUnit_Frame
             PHPUnit_Framework_TestFailure::exceptionToString($e)
         );
 
-        $diagnostic = [
+        $diagnostic = array(
           'message'  => $message[0],
           'severity' => 'fail'
-        ];
+        );
 
         if ($e instanceof PHPUnit_Framework_ExpectationFailedException) {
             $cf = $e->getComparisonFailure();
 
             if ($cf !== null) {
-                $diagnostic['data'] = [
+                $diagnostic['data'] = array(
                   'got'      => $cf->getActual(),
                   'expected' => $cf->getExpected()
-                ];
+                );
             }
         }
 
@@ -132,8 +116,7 @@ class PHPUnit_Util_Log_TAP extends PHPUnit_Util_Printer implements PHPUnit_Frame
      * @param PHPUnit_Framework_Test $test
      * @param Exception              $e
      * @param float                  $time
-     *
-     * @since Method available since Release 4.0.0
+     * @since  Method available since Release 4.0.0
      */
     public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time)
     {
@@ -154,8 +137,7 @@ class PHPUnit_Util_Log_TAP extends PHPUnit_Util_Printer implements PHPUnit_Frame
      * @param PHPUnit_Framework_Test $test
      * @param Exception              $e
      * @param float                  $time
-     *
-     * @since Method available since Release 3.0.0
+     * @since  Method available since Release 3.0.0
      */
     public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time)
     {
