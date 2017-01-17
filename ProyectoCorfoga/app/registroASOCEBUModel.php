@@ -19,7 +19,7 @@ class registroASOCEBUModel extends Model
     
      protected $table = 'registro_asocebu';
     protected $fillable = [
-        'id','fecha_emitido','propietario_id','animal_registro',
+        'id','numArchivo','fecha_emitido','propietario_id','animal_registro',
     ];
 
     /**

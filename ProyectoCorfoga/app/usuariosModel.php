@@ -20,7 +20,7 @@ class usuariosModel extends Model
     
      protected $table = 'usuarios';
     protected $fillable = [
-       'cedula','nombre','contrasenia','email','telefono','rol',
+       'id','nombre','contrasenia','email','telefono','rol',
     ];
 
     /**
